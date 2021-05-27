@@ -12,12 +12,16 @@ pipeline {
 		}
 		stage('Test') {
 			steps {
-				echo 'Testing ...'
+				echo 'Testing and looking for artifact'
+				unstash 'WAR'
+				sh 'find . -name webcalc.war'
 			}
 		}
 		stage('Deploy') {
 			steps {
 				echo 'Deploying ...'
+				unstash 'WAR'
+				sh 'find . -name webcalc.war'
 			}
 		}
 	}
