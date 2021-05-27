@@ -41,7 +41,8 @@ pipeline {
 				unstash 'WAR'
 				sh 'find . -name webcalc.war'
 				archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
-				sh 'cp target/webcalc.war /tomcat_dir'
+				sh 'cp target/webcalc.war /tmp'
+				sh 'df -kh'
 			}
 		}
 	}
