@@ -11,10 +11,28 @@ pipeline {
 			}
 		}
 		stage('Test') {
-			steps {
-				echo 'Testing and looking for artifact'
-				unstash 'WAR'
-				sh 'find . -name webcalc.war'
+			parallel {
+				stage('Tomcat Test') {
+					steps {
+						echo 'Testing with Tomcat'
+						unstash 'WAR'
+						sh 'find . -name webcalc.war'
+					}
+				}
+				stage('Wildfly Test') {
+					steps {
+						echo 'Testing with Wildfly'
+						unstash 'WAR'
+						sh 'find . -name webcalc.war'
+					}
+				}
+				stage('Weblogic Test') {
+					steps {
+						echo 'Testing with Weblogic'
+						unstash 'WAR'
+						sh 'find . -name webcalc.war'
+					}
+				}
 			}
 		}
 		stage('Deploy') {
@@ -23,6 +41,7 @@ pipeline {
 				unstash 'WAR'
 				sh 'find . -name webcalc.war'
 				archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
+				sh 'cp target/webcalc.war /tomcat_dir'
 			}
 		}
 	}
