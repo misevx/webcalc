@@ -22,6 +22,7 @@ pipeline {
 				echo 'Deploying ...'
 				unstash 'WAR'
 				sh 'find . -name webcalc.war'
+				archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
 			}
 		}
 	}
