@@ -6,6 +6,8 @@ pipeline {
 		stage('Build') {
 			steps {
 				echo 'Building ...'
+				sh mvn package -DskipTests
+				stash(name='WAR', includes='**/target/webcalc.war')
 			}
 		}
 		stage('Test') {
