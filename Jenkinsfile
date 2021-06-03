@@ -1,7 +1,5 @@
 pipeline {
-	agent {
-		label 'docker'
-	}
+	agent any
 	stages {
 		stage('Build') {
 			steps {
@@ -36,13 +34,24 @@ pipeline {
 			}
 		}
 		stage('Deploy') {
-			steps {
-				echo 'Deploying ...'
-				unstash 'WAR'
-				sh 'find . -name webcalc.war'
-				archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
-				sh 'cp target/webcalc.war /tmp'
-				sh 'df -kh'
+			parallel {
+				stage('Deploy to Tomcat') {
+					steps {
+						echo 'Deploying to Tomcat'
+						unstash 'WAR'
+						archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
+						sh 'cp target/webcalc.war /tomcat_webapps_dir'
+					}
+				}
+				stage('Deploy to Wildfly') {
+					steps {
+						echo 'Deploying to Wildfly'
+						unstash 'WAR'
+						archiveArtifacts(artifacts: 'target/webcalc.war', onlyIfSuccessful: true)
+						sh 'cp target/webcalc.war /wildfly_webapps_dir'
+						sh 'touch /wildfly_webapps_dir/.dodeploy
+					}
+				}
 			}
 		}
 	}
